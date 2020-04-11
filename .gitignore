@@ -4,6 +4,7 @@ mapVenv/
 .idea/
 *.csv
 serverless.yml
+.vscode/
 
 # Distribution / packaging
 .Python
