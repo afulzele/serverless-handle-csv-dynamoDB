@@ -78,11 +78,11 @@ def main(event, context, KEY=KEY):
             reader = csv.reader(f)
             data = list(reader)
             for i in data:
-                if i[8] == 'global' and i[0] != "":
+                if i[0] != "" and i[0] != "place" and (i[8] == 'global' or i[8] == 'United States'):
                     response = table.get_item(
                         Key={
                             'place': str(i[0]),
-                            'region': 'global'
+                            'region': i[8]
                         }
                     )        
                     if 'Item' not in response.keys():
@@ -103,7 +103,7 @@ def main(event, context, KEY=KEY):
                         table.update_item(
                             Key={
                                 'place': str(i[0]),
-                                'region': 'global'
+                                'region': i[8]
                             },
                             UpdateExpression='SET cases = :val1, new_cases = :val2, total_cases = :val3, deaths = :val4, new_deaths = :val5, total_deaths = :val6, recovered = :val7',
                             ExpressionAttributeValues={
@@ -116,7 +116,39 @@ def main(event, context, KEY=KEY):
                                 ':val7': i[7],
                             }
                         )
-    
+                else if i[0] != "" and i[0] != "place" and i[5] == 'India':
+                    response = table.get_item(
+                        Key={
+                            'state': str(i[0]),
+                            'region': i[5]
+                        }
+                    )        
+                    if 'Item' not in response.keys():
+                        table.put_item(
+                            Item={
+                                "place" : i[0],
+                                "state_cases" : i[1],
+                                "state_deaths" : i[2],
+                                "state_recovered" : i[3],
+                                "district" : i[4],
+                                'region': i[5]
+                            }
+                        )
+                    else:
+                        table.update_item(
+                            Key={
+                                'place': str(i[0]),
+                                'region': i[5]
+                            },
+                            UpdateExpression='SET state_cases = :val1, state_deaths = :val2, state_recovered = :val3, district = :val4',
+                            ExpressionAttributeValues={
+                                ':val1': i[1],
+                                ':val2': i[2],
+                                ':val3': i[3],
+                                ':val4': i[4],
+                            }
+                        )
+
     # print("Table status:", table.table_status)
 
     print('All done !')

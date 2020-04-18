@@ -4,8 +4,8 @@ provider:
   name: aws
   runtime: python3.7
   credentials:
-    accessKeyId: ###
-    secretAccessKey: ###
+    accessKeyId: #
+    secretAccessKey: #
 
 package:
   exclude:
